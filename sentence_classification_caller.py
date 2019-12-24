@@ -1,3 +1,4 @@
+import sys
 from sentence_classification import *
 
 mode = sys.argv[1] #train / test / evaluate

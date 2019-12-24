@@ -1,7 +1,9 @@
 import spacy
 import keras
+import numpy
+import codecs
 from keras.models import load_model
-from keras.models import Sequential
+from keras.models import Model
 from keras.layers import Dense, Input
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support
@@ -31,14 +33,16 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 		X_train[i] = curr_doc._.trf_last_hidden_state[0]
 
 	#Model Creation and Training
-	model = Sequential()
-	model.add(Input(shape = (network_params['input_dim'],)))
+	input = Input(shape = (network_params['input_dim'],))
 
+	output = None
 	if(dense_layer_required.lower() == 'true'):
-		model.add(Dense(300, activation = 'relu'))
+		hidden = Dense(300, activation = 'relu')(input)
+		output = Dense(2, activation = 'softmax')(hidden)
+	else:
+		output = Dense(2, activation = 'softmax')(input)
 
-	model.add(Dense(2, activation = 'softmax'))
-
+	model = Model(inputs = input, outputs = output)
 	model.compile(optimizer = network_params['optimizer'], loss = 'categorical_crossentropy')
 	model.print_summary()
 
@@ -121,5 +125,5 @@ def evaluate_bert_based_classification(test_data_path, model_path, test_predicti
 		test_predictions_file.write(sentences[k] + '\t' + str(labels[k]) + '\t' + str(predictions[k]) + '\n')
 	test_predictions_file.close()
 	
-	print (confusion_matrix(labels, predictions)
+	print (confusion_matrix(labels, predictions))
 	print (precision_recall_fscore_support(labels, predictions))

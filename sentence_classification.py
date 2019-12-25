@@ -6,6 +6,7 @@ from keras.models import load_model
 from keras.models import Model
 from keras.layers import Dense, Input
 from sklearn.metrics import confusion_matrix
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import precision_recall_fscore_support
 
 def train_bert_based_classification(train_data_path, model_save_path, dense_layer_required, network_params):
@@ -32,6 +33,9 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 		curr_doc = nlp(sentences[i])
 		X_train[i] = curr_doc._.trf_last_hidden_state[0]
 
+	ohe = OneHotEncoder()
+	Y_train_onehot =  = ohe.fit_transform(Y_train).toarray()
+
 	#Model Creation and Training
 	input = Input(shape = (network_params['input_dim'],))
 
@@ -44,9 +48,9 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 
 	model = Model(inputs = input, outputs = output)
 	model.compile(optimizer = network_params['optimizer'], loss = 'categorical_crossentropy')
-	model.print_summary()
+	model.summary()
 
-	model.fit(X_train, Y_train, epochs = network_params['epochs'], batch_size = network_params['batch_size'])
+	model.fit(X_train, Y_train_onehot, epochs = network_params['epochs'], batch_size = network_params['batch_size'])
 
 	#Model Writing
 	model.save(model_save_path)

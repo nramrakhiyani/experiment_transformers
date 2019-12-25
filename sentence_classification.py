@@ -34,7 +34,7 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 		X_train[i] = curr_doc._.trf_last_hidden_state[0]
 
 	ohe = OneHotEncoder()
-	Y_train_onehot =  = ohe.fit_transform(Y_train).toarray()
+	Y_train_onehot = ohe.fit_transform(Y_train).toarray()
 
 	#Model Creation and Training
 	input = Input(shape = (network_params['input_dim'],))

@@ -17,8 +17,8 @@ if(mode == 'train'):
 
 elif(mode == 'test'):
 	prediction_file_path = sys.argv[4]
-	test_bert_based_classification(input_file_path, model_file_path, prediction_file_path)
+	test_bert_based_classification(input_file_path, model_file_path, prediction_file_path, network_params)
 
 elif(mode == 'evaluate'):
 	prediction_file_path = sys.argv[4]
-	evaluate_bert_based_classification(input_file_path, model_file_path, prediction_file_path)
+	evaluate_bert_based_classification(input_file_path, model_file_path, prediction_file_path, network_params)

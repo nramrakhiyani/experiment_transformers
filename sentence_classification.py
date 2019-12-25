@@ -23,6 +23,7 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 	train_data.close()
 
 	#Preparing spacy model loaded with the BERT model
+	print ('Loading spacy model')
 	nlp = spacy.load("en_trf_bertbaseuncased_lg")
 
 	#Preparing X_train (using spacy_transformer's BERT models) and Y_train
@@ -55,9 +56,9 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 
 	#Model Writing
 	model.save(model_save_path)
+	print ('Model trained and saved')
 
-
-def test_bert_based_classification(test_data_path, model_path, test_predictions_path):
+def test_bert_based_classification(test_data_path, model_path, test_predictions_path, network_params):
 	#Reading data
 	sentences = []
 	test_data = codecs.open(test_data_path, 'r', encoding = 'utf-8', errors = 'ignore')
@@ -93,7 +94,7 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 	test_predictions_file.close()
 
 
-def evaluate_bert_based_classification(test_data_path, model_path, test_predictions_path):
+def evaluate_bert_based_classification(test_data_path, model_path, test_predictions_path, network_params):
 	#Reading data
 	sentences = []
 	labels = []

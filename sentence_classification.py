@@ -136,5 +136,5 @@ def evaluate_bert_based_classification(test_data_path, model_path, test_predicti
 	test_predictions_file.close()
 	
 	print (confusion_matrix(Y_test, Y_pred))
-	print (precision_recall_fscore_support(labels, Y_pred))
+	print (precision_recall_fscore_support(Y_test, Y_pred))
 	print ('Evaluation Complete.')

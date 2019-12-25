@@ -85,7 +85,7 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 	predictions = []
 	for i in range(len(sentences)):
 		prediction = model.predict([numpy.array([X_test[i]])])
-		pred = np.argmax(prediction, axis = -1)
+		pred = numpy.argmax(prediction, axis = -1)
 		predictions.append(pred[0])
 
 	test_predictions_file = codecs.open(test_predictions_path, 'w', encoding = 'utf-8', errors = 'ignore')
@@ -123,7 +123,7 @@ def evaluate_bert_based_classification(test_data_path, model_path, test_predicti
 	predictions = []
 	for i in range(len(sentences)):
 		prediction = model.predict([numpy.array([X_test[i]])])
-		pred = np.argmax(prediction, axis = -1)
+		pred = numpy.argmax(prediction, axis = -1)
 		predictions.append(pred[0])
 	
 	test_predictions_file = codecs.open(test_predictions_path, 'w', encoding = 'utf-8', errors = 'ignore')

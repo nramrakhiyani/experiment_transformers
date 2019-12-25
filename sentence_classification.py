@@ -70,6 +70,7 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 	test_data.close()
 
 	#Preparing spacy model loaded with the BERT model
+	print ('Loading spacy model')
 	nlp = spacy.load("en_trf_bertbaseuncased_lg")
 
 	#Preparing X_test (using spacy_transformer's BERT models)
@@ -82,17 +83,17 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 	model = load_model(model_path)
 
 	#Model Predictions
-	predictions = []
+	Y_pred = []
 	for i in range(len(sentences)):
 		prediction = model.predict([numpy.array([X_test[i]])])
 		pred = numpy.argmax(prediction, axis = -1)
-		predictions.append(pred[0])
+		Y_pred.append(pred[0])
 
 	test_predictions_file = codecs.open(test_predictions_path, 'w', encoding = 'utf-8', errors = 'ignore')
-	for k in range(len(predictions)):
-		test_predictions_file.write(sentences[k] + '\t' + str(predictions[k]) + '\n')
+	for k in range(len(Y_pred)):
+		test_predictions_file.write(sentences[k] + '\t' + str(Y_pred[k]) + '\n')
 	test_predictions_file.close()
-
+	print ('Testing Complete.')
 
 def evaluate_bert_based_classification(test_data_path, model_path, test_predictions_path, network_params):
 	#Reading data
@@ -108,11 +109,14 @@ def evaluate_bert_based_classification(test_data_path, model_path, test_predicti
 	test_data.close()
 
 	#Preparing spacy model loaded with the BERT model
+	print ('Loading spacy model')
 	nlp = spacy.load("en_trf_bertbaseuncased_lg")
 
 		#Preparing X_test (using spacy_transformer's BERT models)
 	X_test = numpy.zeros((len(sentences), network_params['input_dim']))
+	Y_test = numpy.zeros((len(sentences), ))
 	for i in range(len(sentences)):
+		Y_test[i] = float(labels[i])
 		curr_doc = nlp(sentences[i])
 		X_test[i] = curr_doc._.trf_last_hidden_state[0]
 
@@ -120,16 +124,17 @@ def evaluate_bert_based_classification(test_data_path, model_path, test_predicti
 	model = load_model(model_path)
 
 	#Model Predictions
-	predictions = []
+	Y_pred = []
 	for i in range(len(sentences)):
 		prediction = model.predict([numpy.array([X_test[i]])])
 		pred = numpy.argmax(prediction, axis = -1)
-		predictions.append(pred[0])
+		Y_pred.append(pred[0])
 	
 	test_predictions_file = codecs.open(test_predictions_path, 'w', encoding = 'utf-8', errors = 'ignore')
-	for k in range(len(predictions)):
-		test_predictions_file.write(sentences[k] + '\t' + str(labels[k]) + '\t' + str(predictions[k]) + '\n')
+	for k in range(len(Y_pred)):
+		test_predictions_file.write(sentences[k] + '\t' + str(labels[k]) + '\t' + str(Y_pred[k]) + '\n')
 	test_predictions_file.close()
 	
-	print (confusion_matrix(labels, predictions))
-	print (precision_recall_fscore_support(labels, predictions))
+	print (confusion_matrix(Y_test, Y_pred))
+	print (precision_recall_fscore_support(labels, Y_pred))
+	print ('Evaluation Complete.')

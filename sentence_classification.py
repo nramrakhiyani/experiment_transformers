@@ -9,7 +9,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import precision_recall_fscore_support
 
-def train_bert_based_classification(train_data_path, model_save_path, dense_layer_required, network_params):
+def train_bert_based_classification(train_data_path, model_save_path, dense_layer_required, network_params, spacy_transformer_model):
 	#Reading data
 	sentences = []
 	labels = []
@@ -24,7 +24,7 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 
 	#Preparing spacy model loaded with the BERT model
 	print ('Loading spacy model')
-	nlp = spacy.load("en_trf_bertbaseuncased_lg")
+	nlp = spacy.load(spacy_transformer_model)
 
 	#Preparing X_train (using spacy_transformer's BERT models) and Y_train
 	X_train = numpy.zeros((len(sentences), network_params['input_dim']))
@@ -58,7 +58,7 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 	model.save(model_save_path)
 	print ('Model trained and saved')
 
-def test_bert_based_classification(test_data_path, model_path, test_predictions_path, network_params):
+def test_bert_based_classification(test_data_path, model_path, test_predictions_path, network_params, spacy_transformer_model):
 	#Reading data
 	sentences = []
 	test_data = codecs.open(test_data_path, 'r', encoding = 'utf-8', errors = 'ignore')
@@ -71,7 +71,7 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 
 	#Preparing spacy model loaded with the BERT model
 	print ('Loading spacy model')
-	nlp = spacy.load("en_trf_bertbaseuncased_lg")
+	nlp = spacy.load(spacy_transformer_model)
 
 	#Preparing X_test (using spacy_transformer's BERT models)
 	X_test = numpy.zeros((len(sentences), network_params['input_dim']))
@@ -95,7 +95,7 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 	test_predictions_file.close()
 	print ('Testing Complete.')
 
-def evaluate_bert_based_classification(test_data_path, model_path, test_predictions_path, network_params):
+def evaluate_bert_based_classification(test_data_path, model_path, test_predictions_path, network_params, spacy_transformer_model):
 	#Reading data
 	sentences = []
 	labels = []
@@ -110,7 +110,7 @@ def evaluate_bert_based_classification(test_data_path, model_path, test_predicti
 
 	#Preparing spacy model loaded with the BERT model
 	print ('Loading spacy model')
-	nlp = spacy.load("en_trf_bertbaseuncased_lg")
+	nlp = spacy.load(spacy_transformer_model)
 
 		#Preparing X_test (using spacy_transformer's BERT models)
 	X_test = numpy.zeros((len(sentences), network_params['input_dim']))

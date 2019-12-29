@@ -13,12 +13,15 @@ network_params['batch_size'] = 16
 
 if(mode == 'train'):
 	dense_layer_required = sys.argv[4] #true / false
-	train_bert_based_classification(input_file_path, model_file_path, dense_layer_required, network_params)
+	spacy_transformer_model = sys.argv[5]
+	train_bert_based_classification(input_file_path, model_file_path, dense_layer_required, network_params, spacy_transformer_model)
 
 elif(mode == 'test'):
 	prediction_file_path = sys.argv[4]
-	test_bert_based_classification(input_file_path, model_file_path, prediction_file_path, network_params)
+	spacy_transformer_model = sys.argv[5]
+	test_bert_based_classification(input_file_path, model_file_path, prediction_file_path, network_params, spacy_transformer_model)
 
 elif(mode == 'evaluate'):
 	prediction_file_path = sys.argv[4]
-	evaluate_bert_based_classification(input_file_path, model_file_path, prediction_file_path, network_params)
+	spacy_transformer_model = sys.argv[5]
+	evaluate_bert_based_classification(input_file_path, model_file_path, prediction_file_path, network_params, spacy_transformer_model)

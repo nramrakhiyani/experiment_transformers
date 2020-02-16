@@ -1,6 +1,6 @@
 import spacy
 import keras
-import numpy
+import numpy as np
 import pickle
 import codecs
 
@@ -10,7 +10,7 @@ from keras_contrib.layers import CRF
 from keras.utils import to_categorical
 from keras.layers import Dense, Input, LSTM, TimeDistributed, Dropout, Bidirectional
 
-def train_bert_based_classification(train_data_path, model_save_path, network_params, spacy_transformer_model):
+def train_bert_based_entity_extraction(train_data_path, model_save_path, network_params, spacy_transformer_model):
 	#Reading data
 	sentences = []
 	tokens = []
@@ -22,10 +22,10 @@ def train_bert_based_classification(train_data_path, model_save_path, network_pa
 		line = line.strip()
 		if(len(line) <= 0 and len(tokens) > 0):
 			sentences.append((tokens, labels))
-			tokens = []
-			labels = []
 			if(max_sent_length < len(tokens)):
 				max_sent_length = len(tokens)
+			tokens = []
+			labels = []
 			continue
 		tokens.append(line.split('\t')[0])
 		labels.append(line.split('\t')[3])
@@ -36,6 +36,7 @@ def train_bert_based_classification(train_data_path, model_save_path, network_pa
 	#Preparing spacy model loaded with the BERT model
 	print ('Loading spacy model - ' + spacy_transformer_model)
 	nlp = spacy.load(spacy_transformer_model)
+	print ('Loaded spacy transformer model')
 
 	tag_index = {}
 	index = 0
@@ -44,12 +45,13 @@ def train_bert_based_classification(train_data_path, model_save_path, network_pa
 		index += 1
 
 	#Preparing X_train (using spacy_transformer's BERT models) and Y_train
+	print ('Preparing X_train (using spacy_transformer\'s BERT models) and Y_train')
 	X_train = np.empty((len(sentences), max_sent_length, network_params['input_dim']))
 	Y_tr = np.empty((len(sentences), max_sent_length))
 	for i in range(len(sentences)):
 		sentence = sentences[i]
-		tokens = sentence(0)
-		labels = sentence(1)
+		tokens = sentence[0]
+		labels = sentence[1]
 		sentence_str = ' '.join(tokens)
 
 		#Getting BERT embeddings
@@ -58,7 +60,7 @@ def train_bert_based_classification(train_data_path, model_save_path, network_pa
 		if(len(tokens) >= max_sent_length):
 			limit = max_sent_length
 		else:
-			limit = len(curr_tokens)
+			limit = len(tokens)
 
 		for j in range(limit):
 			X_train[i][j] = curr_doc._.trf_last_hidden_state[j+1]
@@ -70,7 +72,7 @@ def train_bert_based_classification(train_data_path, model_save_path, network_pa
 				Y_tr[i][j] = tag_index['O']
 
 	Y_train = [to_categorical(i, num_classes = len(tag_index)) for i in Y_tr]
-	print ('Prepared Data')
+	print ('Prepared X_train and Y_train')
 
 	#Building Model - Start ================================================
 	#Input Word Embedding
@@ -85,7 +87,7 @@ def train_bert_based_classification(train_data_path, model_save_path, network_pa
 		model1 = Bidirectional(LSTM(units = network_params['lstm_dim'], return_sequences = True))(dropout1)
 	else:
 		#Bidirectional LSTM layer (Direct without Dropout)
-		model1 = Bidirectional(LSTM(units = network_params['lstm_dim'], return_sequences = True))(inp_merge)
+		model1 = Bidirectional(LSTM(units = network_params['lstm_dim'], return_sequences = True))(word_emb_inp)
 
 	#TimeDistributed layer
 	model2 = TimeDistributed(Dense(len(tag_index), activation = "relu"))(model1)
@@ -113,7 +115,7 @@ def train_bert_based_classification(train_data_path, model_save_path, network_pa
 	pickle.dump(tag_index, os.path.join(model_dir, 'tag_index.pickle'))
 	print ('Model trained and saved')
 
-def test_bert_based_classification(test_data_path, model_path, test_predictions_path, network_params, spacy_transformer_model):
+def test_bert_based_entity_extraction(test_data_path, model_path, test_predictions_path, network_params, spacy_transformer_model):
 	#Reading data
 	sentences = []
 	tokens = []
@@ -153,7 +155,7 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 		model1 = Bidirectional(LSTM(units = network_params['lstm_dim'], return_sequences = True))(dropout1)
 	else:
 		#Bidirectional LSTM layer (Direct without Dropout)
-		model1 = Bidirectional(LSTM(units = network_params['lstm_dim'], return_sequences = True))(inp_merge)
+		model1 = Bidirectional(LSTM(units = network_params['lstm_dim'], return_sequences = True))(word_emb_inp)
 
 	#TimeDistributed layer
 	model2 = TimeDistributed(Dense(len(tag_index), activation = "relu"))(model1)
@@ -173,8 +175,8 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 	output_file = codecs.open(test_predictions_path, 'w', encoding = 'UTF-8')
 	for i in range(len(sentences)):
 		sentence = sentences[i]
-		tokens = sentence(0)
-		labels = sentence(1)
+		tokens = sentence[0]
+		labels = sentence[1]
 		sentence_str = ' '.join(tokens)
 
 		#Getting BERT embeddings

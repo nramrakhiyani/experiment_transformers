@@ -1,5 +1,5 @@
 import sys
-from sentence_classification import *
+from entity_extraction import *
 
 mode = sys.argv[1] #train / test / evaluate
 input_file_path = sys.argv[2] #if mode is train, this is training data path else test data path

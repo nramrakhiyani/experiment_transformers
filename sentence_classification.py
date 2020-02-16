@@ -23,7 +23,7 @@ def train_bert_based_classification(train_data_path, model_save_path, dense_laye
 	train_data.close()
 
 	#Preparing spacy model loaded with the BERT model
-	print ('Loading spacy model')
+	print ('Loading spacy model - ' + spacy_transformer_model)
 	nlp = spacy.load(spacy_transformer_model)
 
 	#Preparing X_train (using spacy_transformer's BERT models) and Y_train
@@ -70,7 +70,7 @@ def test_bert_based_classification(test_data_path, model_path, test_predictions_
 	test_data.close()
 
 	#Preparing spacy model loaded with the BERT model
-	print ('Loading spacy model')
+	print ('Loading spacy model - ' + spacy_transformer_model)
 	nlp = spacy.load(spacy_transformer_model)
 
 	#Preparing X_test (using spacy_transformer's BERT models)
@@ -109,7 +109,7 @@ def evaluate_bert_based_classification(test_data_path, model_path, test_predicti
 	test_data.close()
 
 	#Preparing spacy model loaded with the BERT model
-	print ('Loading spacy model')
+	print ('Loading spacy model - ' + spacy_transformer_model)
 	nlp = spacy.load(spacy_transformer_model)
 
 		#Preparing X_test (using spacy_transformer's BERT models)
@@ -129,7 +129,7 @@ def evaluate_bert_based_classification(test_data_path, model_path, test_predicti
 		prediction = model.predict([numpy.array([X_test[i]])])
 		pred = numpy.argmax(prediction, axis = -1)
 		Y_pred.append(pred[0])
-	
+
 	test_predictions_file = codecs.open(test_predictions_path, 'w', encoding = 'utf-8', errors = 'ignore')
 	for k in range(len(Y_pred)):
 		test_predictions_file.write(sentences[k] + '\t' + str(labels[k]) + '\t' + str(Y_pred[k]) + '\n')

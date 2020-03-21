@@ -12,6 +12,7 @@ network_params['optimizer'] = 'adam' #adam, sgd and adadelta
 network_params['epochs'] = 10
 network_params['batch_size'] = 16
 network_params['dropout'] = 0
+network_params['max_sentence_length'] = 100
 
 if(mode == 'train'):
 	spacy_transformer_model = sys.argv[5]

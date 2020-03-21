@@ -16,14 +16,14 @@ def train_bert_based_entity_extraction(train_data_path, model_save_path, network
 	tokens = []
 	labels = []
 	all_labels = []
-	max_sent_length = 0
+	max_sent_length = network_params['max_sentence_length']
 	train_data = codecs.open(train_data_path, 'r', encoding = 'utf-8', errors = 'ignore')
 	for line in train_data:
 		line = line.strip()
 		if(len(line) <= 0 and len(tokens) > 0):
 			sentences.append((tokens, labels))
-			if(max_sent_length < len(tokens)):
-				max_sent_length = len(tokens)
+			#if(max_sent_length < len(tokens)):
+			#	max_sent_length = len(tokens)
 			tokens = []
 			labels = []
 			continue
@@ -49,6 +49,11 @@ def train_bert_based_entity_extraction(train_data_path, model_save_path, network
 	X_train = np.empty((len(sentences), max_sent_length, network_params['input_dim']))
 	Y_tr = np.empty((len(sentences), max_sent_length))
 	for i in range(len(sentences)):
+		if(i%50 == 0):
+			print ('.', end = '')
+		if(i%500 == 0):
+			print ('')
+
 		sentence = sentences[i]
 		tokens = sentence[0]
 		labels = sentence[1]

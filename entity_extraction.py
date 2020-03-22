@@ -118,7 +118,11 @@ def train_bert_based_entity_extraction(train_data_path, model_save_path, network
 
 	#Saving tag_index dict
 	model_dir = os.path.dirname(model_save_path)
-	pickle.dump(tag_index, os.path.join(model_dir, 'tag_index.pickle'))
+	
+	tag_index_pickle_path = os.path.join(model_dir, 'tag_index.pickle')
+	with open(tag_index_pickle_path, 'wb') as pickle_file_path:
+		pickle.dump(tag_index, pickle_file_path)
+
 	print ('Model trained and saved')
 
 def test_bert_based_entity_extraction(test_data_path, model_path, test_predictions_path, network_params, spacy_transformer_model):

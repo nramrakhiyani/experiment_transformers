@@ -196,7 +196,7 @@ def test_bert_based_entity_extraction(test_data_path, model_path, test_predictio
 		curr_doc = nlp(sentence_str)
 
 		X_test = np.empty((1, len(tokens), network_params['input_dim']))
-		for j in range(tokens):
+		for j in range(len(tokens)):
 			X_test[0][j] = curr_doc._.trf_last_hidden_state[j+1]
 
 		p = model.predict([np.array([X_test])])

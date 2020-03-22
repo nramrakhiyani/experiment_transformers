@@ -147,7 +147,10 @@ def test_bert_based_entity_extraction(test_data_path, model_path, test_predictio
 	nlp = spacy.load(spacy_transformer_model)
 
 	model_dir = os.path.dirname(model_path)
-	tag_index = pickle.load(os.path.join(model_dir, 'tag_index.pickle'))
+	tag_index_pickle_path = os.path.join(model_dir, 'tag_index.pickle')
+	with open(tag_index_pickle_path, 'rb') as pickle_file_path:
+		tag_index = pickle.load(pickle_file_path)
+
 	index_tag = {}
 	for tag in tag_index:
 		index_tag[tag_index[tag]] = tag

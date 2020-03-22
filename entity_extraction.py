@@ -182,7 +182,7 @@ def test_bert_based_entity_extraction(test_data_path, model_path, test_predictio
 	model = Model(word_emb_inp, out)
 
 	#Model Loading
-	model.load_weights(model_file_path)
+	model.load_weights(model_path)
 
 	#Testing on each example and collecting tags
 	output_file = codecs.open(test_predictions_path, 'w', encoding = 'UTF-8')

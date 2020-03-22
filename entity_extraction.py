@@ -185,8 +185,14 @@ def test_bert_based_entity_extraction(test_data_path, model_path, test_predictio
 	model.load_weights(model_path)
 
 	#Testing on each example and collecting tags
+	print ('Testing', end = '')
 	output_file = codecs.open(test_predictions_path, 'w', encoding = 'UTF-8')
 	for i in range(len(sentences)):
+		if(i%50 == 0):
+			print ('.', end = '')
+		if(i%500 == 0):
+			print ('')
+
 		sentence = sentences[i]
 		tokens = sentence[0]
 		labels = sentence[1]
